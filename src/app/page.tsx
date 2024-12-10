@@ -1,58 +1,119 @@
 'use client';
 
 import { useAuthStore } from '../store/authStore';
-import Image from 'next/image';
+import {
+  DealMatchingIcon,
+  SecureProcessIcon,
+  ExpertSupportIcon,
+  AnalyticsIcon,
+} from '../components/icons/FeatureIcons';
 
 // Landing Page 组件
 const LandingPage = () => {
   const login = useAuthStore((state) => state.login);
 
+  // 特性部分的内容配置
+  const features = [
+    {
+      title: 'Smart Deal Matching',
+      description: 'Our advanced algorithms analyze multiple parameters to connect you with the most relevant M&A opportunities. Save time and resources by focusing on deals that matter.',
+      icon: DealMatchingIcon,
+      imagePosition: 'right',
+    },
+    {
+      title: 'Enterprise-Grade Security',
+      description: 'Protect your sensitive deal information with our state-of-the-art security infrastructure. We employ bank-level encryption and strict access controls.',
+      icon: SecureProcessIcon,
+      imagePosition: 'left',
+    },
+    {
+      title: 'Expert M&A Support',
+      description: 'Get guidance from experienced M&A professionals throughout your journey. Our team helps you navigate complex transactions and make informed decisions.',
+      icon: ExpertSupportIcon,
+      imagePosition: 'right',
+    },
+    {
+      title: 'Advanced Analytics',
+      description: 'Make data-driven decisions with our comprehensive analytics suite. Track deal progress, market trends, and key performance indicators in real-time.',
+      icon: AnalyticsIcon,
+      imagePosition: 'left',
+    },
+  ];
+
   return (
     <div className="relative overflow-hidden">
-      {/* 主要内容区域 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-12">
-        {/* 标题部分 */}
-        <div className="text-center space-y-8">
-          <h1 className="text-5xl font-display font-bold text-neutral-900 sm:text-6xl">
-            Streamline Your M&A Journey
-          </h1>
-          <p className="max-w-2xl mx-auto text-xl text-neutral-600">
-            Connect with the right partners, make informed decisions, and close deals efficiently on our secure M&A platform.
-          </p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={login}
-              className="bg-primary-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-primary-600 transition-colors"
-            >
-              Get Started
-            </button>
-            <button className="border-2 border-neutral-300 text-neutral-700 px-8 py-3 rounded-lg text-lg font-medium hover:border-primary-500 hover:text-primary-500 transition-colors">
-              Learn More
-            </button>
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-primary-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center space-y-8 max-w-3xl mx-auto">
+            <h1 className="text-5xl font-display font-bold text-neutral-900 sm:text-6xl">
+              Streamline Your M&A Journey
+            </h1>
+            <p className="text-xl text-neutral-600">
+              Connect with the right partners, make informed decisions, and close deals efficiently on our secure M&A platform.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={login}
+                className="bg-primary-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-primary-600 transition-colors"
+              >
+                Get Started
+              </button>
+              <button className="border-2 border-neutral-300 text-neutral-700 px-8 py-3 rounded-lg text-lg font-medium hover:border-primary-500 hover:text-primary-500 transition-colors">
+                Learn More
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* 特点展示 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-          {[
-            {
-              title: 'Deal Matching',
-              description: 'Advanced algorithms to connect you with the most relevant opportunities.'
-            },
-            {
-              title: 'Secure Process',
-              description: 'Enterprise-grade security for confidential deal information.'
-            },
-            {
-              title: 'Expert Support',
-              description: 'Professional guidance throughout your M&A journey.'
-            }
-          ].map((feature) => (
-            <div key={feature.title} className="text-center space-y-4 p-6">
-              <h3 className="text-xl font-semibold text-neutral-900">{feature.title}</h3>
-              <p className="text-neutral-600">{feature.description}</p>
-            </div>
-          ))}
+      {/* Features Section */}
+      <div className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-24">
+            {features.map((feature, index) => (
+              <div
+                key={feature.title}
+                className={`flex flex-col ${
+                  feature.imagePosition === 'right' ? 'md:flex-row' : 'md:flex-row-reverse'
+                } items-center gap-12 md:gap-24`}
+              >
+                {/* Text Content */}
+                <div className="flex-1 space-y-4">
+                  <h2 className="text-3xl font-display font-bold text-neutral-900">
+                    {feature.title}
+                  </h2>
+                  <p className="text-lg text-neutral-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                {/* Icon/Image */}
+                <div className="flex-1 flex justify-center">
+                  <div className="w-48 h-48 rounded-2xl bg-primary-50 p-8 text-primary-500">
+                    <feature.icon />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-primary-50 py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-display font-bold text-neutral-900 mb-6">
+            Ready to Transform Your M&A Process?
+          </h2>
+          <p className="text-lg text-neutral-600 mb-8">
+            Join leading companies already using Merge Flow to streamline their M&A operations.
+          </p>
+          <button
+            onClick={login}
+            className="bg-primary-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-primary-600 transition-colors"
+          >
+            Start Your Journey
+          </button>
         </div>
       </div>
     </div>
