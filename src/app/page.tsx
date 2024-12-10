@@ -7,6 +7,7 @@ import {
   ExpertSupportIcon,
   AnalyticsIcon,
 } from '../components/icons/FeatureIcons';
+import CompanyProfile from '../components/dashboard/CompanyProfile';
 
 // Landing Page 组件
 const LandingPage = () => {
@@ -122,20 +123,38 @@ const LandingPage = () => {
 
 // 已登录状态的主页组件
 const AuthenticatedHome = () => {
+  const userProfile = useAuthStore((state) => state.userProfile);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-3xl font-semibold text-neutral-900 mb-6">Welcome to Merge Flow</h1>
-        <p className="text-neutral-600 mb-4">
-          This is a placeholder for the authenticated dashboard. Future content will include:
+      {/* 欢迎信息 */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-semibold text-neutral-900">
+          Welcome back, {userProfile?.contactPerson.name}
+        </h1>
+        <p className="text-neutral-600 mt-2">
+          Manage your company profile and track your M&A journey
         </p>
-        <ul className="list-disc list-inside text-neutral-600 space-y-2">
-          <li>Active deals and opportunities</li>
-          <li>Recent activities and updates</li>
-          <li>Important notifications</li>
-          <li>Quick access to key features</li>
-        </ul>
       </div>
+
+      {/* 快速统计信息 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-sm font-medium text-neutral-500 mb-1">Annual Revenue</h3>
+          <p className="text-2xl font-semibold text-neutral-900">{userProfile?.annualRevenue}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-sm font-medium text-neutral-500 mb-1">EBITDA</h3>
+          <p className="text-2xl font-semibold text-neutral-900">{userProfile?.ebitda}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-sm font-medium text-neutral-500 mb-1">Employees</h3>
+          <p className="text-2xl font-semibold text-neutral-900">{userProfile?.employeeCount}</p>
+        </div>
+      </div>
+
+      {/* 公司资料 */}
+      <CompanyProfile />
     </div>
   );
 };
