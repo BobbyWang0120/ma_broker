@@ -2,18 +2,27 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuthStore } from '../../store/authStore';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, login, logout } = useAuthStore();
 
   // 导航菜单项配置
-  const menuItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Buy Side', href: '/buyer' },
-    { label: 'Sell Side', href: '/seller' },
-    { label: 'Success Stories', href: '/cases' },
-    { label: 'About Us', href: '/about' },
-  ];
+  const menuItems = isAuthenticated
+    ? [
+        { label: 'Dashboard', href: '/' },
+        { label: 'Deals', href: '/deals' },
+        { label: 'Messages', href: '/messages' },
+        { label: 'Analytics', href: '/analytics' },
+      ]
+    : [
+        { label: 'Home', href: '/' },
+        { label: 'Buy Side', href: '/buyer' },
+        { label: 'Sell Side', href: '/seller' },
+        { label: 'Success Stories', href: '/cases' },
+        { label: 'About Us', href: '/about' },
+      ];
 
   return (
     <nav className="bg-background-primary border-b border-neutral-200">
@@ -39,9 +48,21 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
-            <button className="bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-600 transition-colors duration-200">
-              Get Started
-            </button>
+            {isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="bg-neutral-100 text-neutral-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-neutral-200 transition-colors duration-200"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                onClick={login}
+                className="bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-600 transition-colors duration-200"
+              >
+                Get Started
+              </button>
+            )}
           </div>
 
           {/* 移动端菜单按钮 */}
@@ -86,9 +107,21 @@ const Navbar = () => {
               {item.label}
             </Link>
           ))}
-          <button className="w-full mt-4 bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-600 transition-colors duration-200">
-            Get Started
-          </button>
+          {isAuthenticated ? (
+            <button
+              onClick={logout}
+              className="w-full mt-4 bg-neutral-100 text-neutral-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-neutral-200 transition-colors duration-200"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button
+              onClick={login}
+              className="w-full mt-4 bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-600 transition-colors duration-200"
+            >
+              Get Started
+            </button>
+          )}
         </div>
       </div>
     </nav>
