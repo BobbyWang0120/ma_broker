@@ -24,8 +24,8 @@ export default function DealsFilter({ deals, onFilterChange }: DealsFilterProps)
   });
 
   // 提取所有可能的选项
-  const industries = Array.from(new Set(deals.map(deal => deal.industry)));
-  const locations = Array.from(new Set(deals.map(deal => deal.location)));
+  const industries = Array.from(new Set(deals.map(deal => deal.industry))).sort();
+  const locations = Array.from(new Set(deals.map(deal => deal.location))).sort();
   const revenueRanges = [
     { label: 'All', value: '' },
     { label: '$0-10M', value: '0-10' },
@@ -42,27 +42,27 @@ export default function DealsFilter({ deals, onFilterChange }: DealsFilterProps)
   ];
 
   // 处理筛选逻辑
-  const applyFilters = useCallback(() => {
+  const applyFilters = useCallback((currentFilters: FilterState) => {
     let filteredDeals = [...deals];
 
     // 行业筛选
-    if (filters.industry) {
-      filteredDeals = filteredDeals.filter(deal => deal.industry === filters.industry);
+    if (currentFilters.industry) {
+      filteredDeals = filteredDeals.filter(deal => deal.industry === currentFilters.industry);
     }
 
     // 地区筛选
-    if (filters.location) {
-      filteredDeals = filteredDeals.filter(deal => deal.location === filters.location);
+    if (currentFilters.location) {
+      filteredDeals = filteredDeals.filter(deal => deal.location === currentFilters.location);
     }
 
     // 交易状态筛选
-    if (filters.dealStatus) {
-      filteredDeals = filteredDeals.filter(deal => deal.dealStatus === filters.dealStatus);
+    if (currentFilters.dealStatus) {
+      filteredDeals = filteredDeals.filter(deal => deal.dealStatus === currentFilters.dealStatus);
     }
 
     // 收入范围筛选
-    if (filters.revenueRange) {
-      const [min, max] = filters.revenueRange.split('-').map(Number);
+    if (currentFilters.revenueRange) {
+      const [min, max] = currentFilters.revenueRange.split('-').map(Number);
       filteredDeals = filteredDeals.filter(deal => {
         const revenue = parseInt(deal.annualRevenue.replace(/[^0-9]/g, ''));
         return revenue >= min && revenue <= max;
@@ -70,24 +70,28 @@ export default function DealsFilter({ deals, onFilterChange }: DealsFilterProps)
     }
 
     // 员工数量筛选
-    if (filters.employeeRange) {
-      const [min, max] = filters.employeeRange.split('-').map(Number);
+    if (currentFilters.employeeRange) {
+      const [min, max] = currentFilters.employeeRange.split('-').map(Number);
       filteredDeals = filteredDeals.filter(deal => 
         deal.employeeCount >= min && deal.employeeCount <= max
       );
     }
 
-    onFilterChange(filteredDeals);
-  }, [deals, filters, onFilterChange]);
-
-  // 当筛选条件改变时应用筛选
-  useEffect(() => {
-    applyFilters();
-  }, [filters, applyFilters]);
+    return filteredDeals;
+  }, [deals]);
 
   const handleFilterChange = (key: keyof FilterState, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    const filteredDeals = applyFilters(newFilters);
+    onFilterChange(filteredDeals);
   };
+
+  // 初始化时应用一次筛选
+  useEffect(() => {
+    const filteredDeals = applyFilters(filters);
+    onFilterChange(filteredDeals);
+  }, [deals]); // 只在deals改变时重新筛选
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
