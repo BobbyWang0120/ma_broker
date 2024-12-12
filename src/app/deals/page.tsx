@@ -3,22 +3,32 @@
 import { useState, useEffect } from 'react';
 import { mockDeals } from '../../data/mockDeals';
 import { Deal } from '../../types/deal';
+import DealsFilter from '../../components/deals/DealsFilter';
 
 const PAGE_SIZE = 10;
 
 export default function DealsPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
 
   useEffect(() => {
     setDeals(mockDeals);
+    setFilteredDeals(mockDeals);
   }, []);
 
+  // 处理筛选结果
+  const handleFilterChange = (filtered: Deal[]) => {
+    setFilteredDeals(filtered);
+    setCurrentPage(1); // 重置到第一页
+    setSelectedDeal(null); // 清除选中的deal
+  };
+
   // 计算分页
-  const totalPages = Math.ceil(deals.length / PAGE_SIZE);
+  const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentDeals = deals.slice(startIndex, startIndex + PAGE_SIZE);
+  const currentDeals = filteredDeals.slice(startIndex, startIndex + PAGE_SIZE);
 
   // 分页控制
   const handlePageChange = (page: number) => {
@@ -43,6 +53,14 @@ export default function DealsPage() {
         <p className="text-neutral-600 mt-2">
           Browse through our curated list of M&A opportunities
         </p>
+      </div>
+
+      {/* 筛选器 */}
+      <DealsFilter deals={deals} onFilterChange={handleFilterChange} />
+
+      {/* 结果统计 */}
+      <div className="mb-4 text-sm text-neutral-600">
+        Showing {filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}
       </div>
 
       {/* 交易列表 */}
