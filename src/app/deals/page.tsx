@@ -5,6 +5,7 @@ import { mockDeals } from '../../data/mockDeals';
 import { Deal } from '../../types/deal';
 import DealsFilter from '../../components/deals/DealsFilter';
 import DealsSearch from '../../components/deals/DealsSearch';
+import Link from 'next/link';
 
 const PAGE_SIZE = 10;
 
@@ -143,8 +144,17 @@ export default function DealsPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="mt-4 text-sm text-neutral-500">
-                  Founded: {deal.foundedYear} • Last Updated: {new Date(deal.lastUpdated).toLocaleDateString()}
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="text-sm text-neutral-500">
+                    Founded: {deal.foundedYear} • Last Updated: {new Date(deal.lastUpdated).toLocaleDateString()}
+                  </div>
+                  <Link
+                    href={`/deals/${deal.id}`}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    onClick={(e) => e.stopPropagation()} // 防止触发卡片的点击事件
+                  >
+                    View Details →
+                  </Link>
                 </div>
               </div>
             )}
