@@ -1,7 +1,6 @@
 'use client';
 
 import { Conversation } from '../../types/message';
-import Image from 'next/image';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -9,102 +8,115 @@ interface ConversationListProps {
   onSelect: (conversation: Conversation) => void;
 }
 
-export default function ConversationList({
+const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
   selectedId,
   onSelect,
-}: ConversationListProps) {
-  const buyingConversations = conversations.filter(c => c.type === 'buying');
-  const sellingConversations = conversations.filter(c => c.type === 'selling');
-
-  const formatDate = (timestamp: string) => {
+}) => {
+  const formatDate = (dateString: string) => {
     try {
-      const date = new Date(timestamp);
-      return date.toLocaleDateString();
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      }).format(date);
     } catch (error) {
       return '';
     }
   };
 
-  const ConversationItem = ({ conversation }: { conversation: Conversation }) => (
-    <div
-      className={`p-4 cursor-pointer hover:bg-neutral-50 ${
-        selectedId === conversation.id ? 'bg-blue-50' : ''
-      }`}
-      onClick={() => onSelect(conversation)}
-    >
-      <div className="flex items-start space-x-4">
-        <div className="relative w-12 h-12">
-          <Image
-            src={conversation.brokerAvatar}
-            alt={conversation.brokerName}
-            className="rounded-full"
-            width={48}
-            height={48}
-          />
-          {conversation.unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {conversation.unreadCount}
-            </span>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-neutral-900 truncate">
-              {conversation.companyName}
-            </h3>
-            <span className="text-xs text-neutral-500">
-              {formatDate(conversation.lastMessage.timestamp)}
-            </span>
-          </div>
-          <p className="text-sm text-neutral-500 truncate mt-1">
-            {conversation.lastMessage.content}
-          </p>
-          <p className="text-xs text-neutral-400 mt-1">
-            {conversation.brokerName}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  const buyingConversations = conversations.filter(conv => conv.type === 'buying');
+  const sellingConversations = conversations.filter(conv => conv.type === 'selling');
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-4 py-3 bg-neutral-100">
-        <h2 className="text-lg font-medium text-neutral-900">Messages</h2>
+    <div className="h-full flex flex-col bg-gray-50">
+      <div className="p-4 border-b">
+        <h2 className="text-xl font-semibold text-gray-900">Messages</h2>
       </div>
-      
-      {buyingConversations.length > 0 && (
-        <div>
-          <div className="px-4 py-2 bg-neutral-50">
-            <h3 className="text-sm font-medium text-neutral-500">Acquisition Interests</h3>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {buyingConversations.map(conversation => (
-              <ConversationItem
+      <div className="flex-1 overflow-y-auto">
+        {buyingConversations.length > 0 && (
+          <div className="py-2">
+            <div className="px-4 py-2 text-sm font-medium text-gray-500">
+              Acquisition Interests
+            </div>
+            {buyingConversations.map((conversation) => (
+              <div
                 key={conversation.id}
-                conversation={conversation}
-              />
+                className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${
+                  selectedId === conversation.id ? 'bg-blue-50' : ''
+                }`}
+                onClick={() => onSelect(conversation)}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {conversation.companyName}
+                      </span>
+                      {conversation.unreadCount > 0 && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-500 text-white text-xs rounded-full">
+                          {conversation.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600 line-clamp-1">
+                      {conversation.lastMessage.content}
+                    </div>
+                    <div className="mt-1 flex items-center text-xs text-gray-500">
+                      <span>{conversation.brokerName}</span>
+                      <span className="mx-1">•</span>
+                      <span>{formatDate(conversation.lastMessage.timestamp)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {sellingConversations.length > 0 && (
-        <div>
-          <div className="px-4 py-2 bg-neutral-50">
-            <h3 className="text-sm font-medium text-neutral-500">Sale Interests</h3>
-          </div>
-          <div className="divide-y divide-neutral-100">
-            {sellingConversations.map(conversation => (
-              <ConversationItem
+        {sellingConversations.length > 0 && (
+          <div className="py-2">
+            <div className="px-4 py-2 text-sm font-medium text-gray-500">
+              Sale Interests
+            </div>
+            {sellingConversations.map((conversation) => (
+              <div
                 key={conversation.id}
-                conversation={conversation}
-              />
+                className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${
+                  selectedId === conversation.id ? 'bg-blue-50' : ''
+                }`}
+                onClick={() => onSelect(conversation)}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                      <span className="text-sm font-semibold text-gray-900">
+                        {conversation.companyName}
+                      </span>
+                      {conversation.unreadCount > 0 && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-500 text-white text-xs rounded-full">
+                          {conversation.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-1 text-sm text-gray-600 line-clamp-1">
+                      {conversation.lastMessage.content}
+                    </div>
+                    <div className="mt-1 flex items-center text-xs text-gray-500">
+                      <span>{conversation.brokerName}</span>
+                      <span className="mx-1">•</span>
+                      <span>{formatDate(conversation.lastMessage.timestamp)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ConversationList;

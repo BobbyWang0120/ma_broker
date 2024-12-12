@@ -15,7 +15,6 @@ export const mockConversations: Conversation[] = [
     },
     unreadCount: 2,
     brokerName: 'John Smith',
-    brokerAvatar: '/avatars/broker1.jpg',
     dealId: 'deal1'
   },
   {
@@ -32,7 +31,6 @@ export const mockConversations: Conversation[] = [
     },
     unreadCount: 0,
     brokerName: 'Sarah Johnson',
-    brokerAvatar: '/avatars/broker2.jpg',
     dealId: 'deal2'
   },
   {
@@ -49,7 +47,6 @@ export const mockConversations: Conversation[] = [
     },
     unreadCount: 1,
     brokerName: 'Michael Brown',
-    brokerAvatar: '/avatars/broker3.jpg',
     dealId: 'deal3'
   }
 ];

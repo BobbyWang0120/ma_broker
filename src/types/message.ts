@@ -17,6 +17,5 @@ export interface Conversation {
   lastMessage: Message;
   unreadCount: number;
   brokerName: string;
-  brokerAvatar: string;
   dealId: string;
 }
