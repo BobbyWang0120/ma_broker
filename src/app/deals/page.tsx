@@ -1,25 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockDeals } from '../../data/mockDeals';
 import { Deal } from '../../types/deal';
 
 const PAGE_SIZE = 10;
 
 export default function DealsPage() {
+  const [deals, setDeals] = useState<Deal[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
 
+  useEffect(() => {
+    setDeals(mockDeals);
+  }, []);
+
   // 计算分页
-  const totalPages = Math.ceil(mockDeals.length / PAGE_SIZE);
+  const totalPages = Math.ceil(deals.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentDeals = mockDeals.slice(startIndex, startIndex + PAGE_SIZE);
+  const currentDeals = deals.slice(startIndex, startIndex + PAGE_SIZE);
 
   // 分页控制
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     setSelectedDeal(null);
   };
+
+  if (deals.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-neutral-600">Loading deals...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
