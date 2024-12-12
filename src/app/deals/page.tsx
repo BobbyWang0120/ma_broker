@@ -12,7 +12,7 @@ export default function DealsPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [displayDeals, setDisplayDeals] = useState<Deal[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  const [expandedDealId, setExpandedDealId] = useState<string | null>(null);
 
   // 初始化数据
   useEffect(() => {
@@ -25,7 +25,6 @@ export default function DealsPage() {
     const combinedResults = searchResults.filter(deal => filterResults.includes(deal));
     setDisplayDeals(combinedResults);
     setCurrentPage(1);
-    setSelectedDeal(null);
   };
 
   // 处理筛选结果
@@ -47,7 +46,12 @@ export default function DealsPage() {
   // 分页控制
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    setSelectedDeal(null);
+    setExpandedDealId(null); // 切换页面时收起展开的卡片
+  };
+
+  // 处理卡片点击
+  const handleDealClick = (dealId: string) => {
+    setExpandedDealId(prevId => prevId === dealId ? null : dealId);
   };
 
   if (deals.length === 0) {
@@ -85,8 +89,9 @@ export default function DealsPage() {
         {currentDeals.map((deal) => (
           <div
             key={deal.id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => setSelectedDeal(deal.id === selectedDeal?.id ? null : deal)}
+            className={`bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-200 cursor-pointer
+                      ${expandedDealId === deal.id ? 'ring-2 ring-blue-500 shadow-lg' : ''}`}
+            onClick={() => handleDealClick(deal.id)}
           >
             <div className="flex justify-between items-start">
               <div>
@@ -127,8 +132,8 @@ export default function DealsPage() {
             </div>
 
             {/* 展开的详细信息 */}
-            {selectedDeal?.id === deal.id && (
-              <div className="mt-6 pt-6 border-t border-neutral-200">
+            {expandedDealId === deal.id && (
+              <div className="mt-6 pt-6 border-t border-neutral-200 animate-fadeIn">
                 <p className="text-neutral-700">{deal.shortDescription}</p>
                 <div className="mt-4">
                   <h3 className="text-sm font-medium text-neutral-900 mb-2">Key Highlights</h3>
