@@ -4,31 +4,45 @@ import { useState, useEffect } from 'react';
 import { mockDeals } from '../../data/mockDeals';
 import { Deal } from '../../types/deal';
 import DealsFilter from '../../components/deals/DealsFilter';
+import DealsSearch from '../../components/deals/DealsSearch';
 
 const PAGE_SIZE = 10;
 
 export default function DealsPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
-  const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
+  const [displayDeals, setDisplayDeals] = useState<Deal[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
 
+  // 初始化数据
   useEffect(() => {
     setDeals(mockDeals);
-    setFilteredDeals(mockDeals);
+    setDisplayDeals(mockDeals);
   }, []);
+
+  // 处理筛选和搜索的组合结果
+  const updateDisplayDeals = (searchResults: Deal[], filterResults: Deal[]) => {
+    const combinedResults = searchResults.filter(deal => filterResults.includes(deal));
+    setDisplayDeals(combinedResults);
+    setCurrentPage(1);
+    setSelectedDeal(null);
+  };
 
   // 处理筛选结果
   const handleFilterChange = (filtered: Deal[]) => {
-    setFilteredDeals(filtered);
-    setCurrentPage(1); // 重置到第一页
-    setSelectedDeal(null); // 清除选中的deal
+    updateDisplayDeals(displayDeals, filtered);
+  };
+
+  // 处理搜索结果
+  const handleSearchResults = (results: Deal[]) => {
+    const filterResults = displayDeals.length < deals.length ? displayDeals : deals;
+    updateDisplayDeals(results, filterResults);
   };
 
   // 计算分页
-  const totalPages = Math.ceil(filteredDeals.length / PAGE_SIZE);
+  const totalPages = Math.ceil(displayDeals.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const currentDeals = filteredDeals.slice(startIndex, startIndex + PAGE_SIZE);
+  const currentDeals = displayDeals.slice(startIndex, startIndex + PAGE_SIZE);
 
   // 分页控制
   const handlePageChange = (page: number) => {
@@ -55,12 +69,15 @@ export default function DealsPage() {
         </p>
       </div>
 
+      {/* 搜索栏 */}
+      <DealsSearch deals={deals} onSearchResults={handleSearchResults} />
+
       {/* 筛选器 */}
       <DealsFilter deals={deals} onFilterChange={handleFilterChange} />
 
       {/* 结果统计 */}
       <div className="mb-4 text-sm text-neutral-600">
-        Showing {filteredDeals.length} {filteredDeals.length === 1 ? 'deal' : 'deals'}
+        Showing {displayDeals.length} {displayDeals.length === 1 ? 'deal' : 'deals'}
       </div>
 
       {/* 交易列表 */}
